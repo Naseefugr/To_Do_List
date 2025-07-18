@@ -19,8 +19,8 @@ dashboard.html
   <div class="sidebar">
     <h2 class="title"> <a href="dashboard.html"  style="text-decoration: none; color: #00c9a7;"> <i class="fas fa-tasks"></i> To Do List</a></h2>
     <ul>
-      <li onclick="showTab('addTask')" ><i class="fas fa-plus"></i> Add a Task</li>
       <li onclick="showTab('inbox')"><i class="fas fa-inbox"></i> Inbox</li>
+<li onclick="showTab('addTask')" ><i class="fas fa-plus"></i> Add a Task</li>
       <li onclick="showTab('today')"><i class="fas fa-calendar-day"></i> Today</li>
       <li onclick="showTab('upcoming')"><i class="fas fa-calendar-alt"></i> Upcoming</li>
       <li onclick="showTab('completed')"><i class="fas fa-check-circle"></i> Completed</li>
@@ -195,10 +195,10 @@ dashboard.html
   <button class="fab" onclick="showTab('addTask')"><i class="fas fa-plus"></i></button>
    <script src="script.js"></script>
   <script>
-    // Show "Add Task" tab by default
-    document.addEventListener("DOMContentLoaded", function () {
-      showTab('addTask');
-    });
+   // Show "Inbox" tab by default
+document.addEventListener("DOMContentLoaded", function () {
+  showTab('inbox');
+});
   </script>
 </body>
 </html>
