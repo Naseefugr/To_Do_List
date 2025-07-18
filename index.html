@@ -4,7 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>To-Do List Login</title>
-  
+  <script>
+  // Redirect to dashboard if already logged in
+  if (localStorage.getItem("currentUser")) {
+    window.location.href = "dashboard.html";
+  }
+</script>
   <style>
     body {
       margin: 0;
@@ -187,15 +192,7 @@ if (signupForm) {
   });
 }
 
-// ✔ Redirect to dashboard if logged in and currently on index.html
-if (getCurrentUser() && location.pathname.includes("index.html")) {
-  location.href = "dashboard.html";
-}
 
-// ✔ Redirect to index.html if not logged in and tries to access dashboard.html
-if (!getCurrentUser() && location.pathname.includes("dashboard.html")) {
-  location.href = "index.html";
-}
 
 </script>
 
