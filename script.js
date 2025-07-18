@@ -142,18 +142,21 @@ function renderGroupedTasks(container, groupedTasks, showCompleted = false) {
     groupedTasks[date].forEach((task) => {
       const taskCard = document.createElement("div");
       taskCard.className = "task-card";
-      taskCard.innerHTML = `
-        <b>${task.title}</b><br>
-        <small>${task.date} ${task.time}</small><br>
-        ${task.description}<br>
-        <small>Deadline: ${task.deadline || "N/A"}</small><br>
-        <small>Category: ${task.criteria || "None"}</small>
-        <div class="task-actions">
-          ${!task.completed ? `<button onclick="confirmComplete(${task.id})">✔ Complete</button>` : ""}
-          <button onclick="editTask(${task.id})">✎ Edit</button>
-          <button onclick="deleteTask(${task.id})">🗑 Delete</button>
-        </div>
-      `;
+ const isOverdueComplete = task.completed && task.deadline && new Date(task.deadline) < new Date();
+
+taskCard.innerHTML = `
+  <b>${task.title}</b><br>
+  <small>${task.date} ${task.time}</small><br>
+  ${task.description}<br>
+  <small>Deadline: ${task.deadline || "N/A"}</small><br>
+  <small>Category: ${task.criteria || "None"}</small><br>
+  ${isOverdueComplete ? `<span class="pending-flag">⚠ Completed after deadline — Marked as Pending</span><br>` : ""}
+  <div class="task-actions">
+    ${!task.completed ? `<button onclick="confirmComplete(${task.id})">✔ Complete</button>` : ""}
+    <button onclick="editTask(${task.id})">✎ Edit</button>
+    <button onclick="deleteTask(${task.id})">🗑 Delete</button>
+  </div>
+`;
       dateGroup.appendChild(taskCard);
     });
     container.appendChild(dateGroup);
