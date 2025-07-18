@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel</title>
+
+   <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f7fa;
+      padding: 30px;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 40px;
+    }
+
+    h2, h3 {
+      color: #34495e;
+      margin-top: 40px;
+    }
+
+    .user-card {
+      border: 1px solid #ccc;
+      background: #ffffff;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .user-card p {
+      margin: 10px 0;
+      line-height: 1.6;
+    }
+
+    .user-card strong {
+      color: #000;
+    }
+
+    button {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 6px;
+      margin-right: 10px;
+      margin-top: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    button.edit {
+      background-color: #28a745;
+      color: #fff;
+    }
+
+    button.delete {
+      background-color: #dc3545;
+      color: #fff;
+    }
+
+    button.view {
+      background-color: #007bff;
+      color: #fff;
+    }
+
+    button i {
+      margin-right: 5px;
+    }
+
+    #taskViewer {
+      margin-top: 30px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      background: #fdfdfd;
+      border-radius: 10px;
+    }
+
+    .task-card {
+      border: 1px solid #ccc;
+      background: #fff;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .task-card p {
+      margin: 8px 0;
+    }
+
+    .task-card strong {
+      color: #222;
+    }
+
+    .highlight {
+      font-weight: bold;
+      color: #e67e22;
+    }
+  </style>
+</head>
+<body onload="renderAdminUsers()">
+  <h1>👑 Admin Dashboard</h1>
+  <div id="adminUserList"></div>
+
+  <hr>
+  <h2>📌 User Tasks</h2>
+  <div id="taskViewer"></div>
+
+  <script>
+    function getUsers() {
+      return JSON.parse(localStorage.getItem("users") || "{}");
+    }
+
+    function setUsers(users) {
+      localStorage.setItem("users", JSON.stringify(users));
+    }
+
+    function renderAdminUsers() {
+      const users = getUsers();
+      const container = document.getElementById("adminUserList");
+      container.innerHTML = "<h2>📋 All Users</h2>";
+
+      Object.entries(users).forEach(([username, user]) => {
+        const userCard = document.createElement("div");
+        userCard.className = "user-card";
+        userCard.innerHTML = `
+          <p><strong>Full Name:</strong> ${user.fullName}</p>
+          <p><strong>Username:</strong> ${username}</p>
+          <p><strong>Email:</strong> ${user.email}</p>
+          <p><strong>Password:</strong> ${user.password}</p>
+          <p><strong>Entry Code:</strong> ${user.code}</p>
+          <button class="edit" onclick="adminEditUser('${username}')">Edit</button>
+          <button class="delete" onclick="adminDeleteUser('${username}')">Delete</button>
+          <button class="view" onclick="adminViewTasks('${username}')">View Tasks</button>
+        `;
+        container.appendChild(userCard);
+      });
+    }
+
+    function adminEditUser(username) {
+      const users = getUsers();
+      const user = users[username];
+      if (!user) return;
+
+      const fullName = prompt("Edit Full Name:", user.fullName);
+      const email = prompt("Edit Email:", user.email);
+      const password = prompt("Edit Password:", user.password);
+
+      if (fullName !== null) user.fullName = fullName;
+      if (email !== null) user.email = email;
+      if (password !== null) user.password = password;
+
+      users[username] = user;
+      setUsers(users);
+      alert("User updated.");
+      renderAdminUsers();
+    }
+
+    function adminDeleteUser(username) {
+      const confirm1 = confirm("Delete user '" + username + "'?");
+      const confirm2 = confirm("This action is permanent. Continue?");
+      if (!confirm1 || !confirm2) return;
+
+      const users = getUsers();
+      delete users[username];
+      setUsers(users);
+      localStorage.removeItem("tasks_" + username);
+      alert("User deleted.");
+      renderAdminUsers();
+      document.getElementById("taskViewer").innerHTML = "";
+    }
+
+    function adminViewTasks(username) {
+      const tasks = JSON.parse(localStorage.getItem("tasks_" + username) || "[]");
+      const container = document.getElementById("taskViewer");
+
+      if (tasks.length === 0) {
+        container.innerHTML = `<p>No tasks found for <strong>${username}</strong>.</p>`;
+        return;
+      }
+
+      let html = `<h3>Tasks for ${username}</h3>`;
+      tasks.forEach((task, index) => {
+        html += `
+          <div class="task-card">
+            <p><strong>Title:</strong> ${task.title || "Untitled"}</p>
+            <p><strong>Date:</strong> ${task.date || "N/A"}</p>
+            <p><strong>Time:</strong> ${task.time || "N/A"}</p>
+            <p><strong>Description:</strong> ${task.description || "—"}</p>
+            <p><strong>Status:</strong> ${task.status || "Pending"}</p>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+  </script>
+</body>
+</html>

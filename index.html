@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>To-Do List Login</title>
+  
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #7f9cf5, #5e72e4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .auth-container {
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 420px;
+      transition: 0.3s ease-in-out;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 25px;
+      font-weight: 600;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: 0.2s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #5e72e4;
+      box-shadow: 0 0 5px rgba(94, 114, 228, 0.4);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #5e72e4;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      margin-top: 10px;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #324cdd;
+    }
+
+    .toggle {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    .toggle a {
+      color: #5e72e4;
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .toggle a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div id="inbox" class="tab" style="display:none;">
+  📥 <h2>Inbox</h2>
+  <div id="inboxTasks">
+    <!-- Tasks will be dynamically rendered here -->
+  </div>
+</div>
+
+<!-- Sign Up and Login Forms -->
+<div class="auth-container" id="authContainer">
+  <form id="loginForm">
+    <h2>Login</h2>
+    <input type="text" id="loginUsername" placeholder="Username" required>
+    <input type="password" id="loginPassword" placeholder="Password" required>
+    <button type="submit">Login</button>
+    <p>Don't have an account? <a href="#" onclick="toggleForms()">Sign Up</a></p>
+  </form>
+
+  <form id="signupForm" style="display:none;">
+    <h2>Sign Up</h2>
+    <input type="text" id="signupFullName" placeholder="Full Name" required>
+    <input type="email" id="signupEmail" placeholder="Email" required>
+    <input type="text" id="signupUsername" placeholder="Username" required>
+    <input type="password" id="signupPassword" placeholder="Password" required>
+    <input type="text" id="signupCode" placeholder="Entry Code" required>
+    <button type="submit">Sign Up</button>
+    <p>Already have an account? <a href="#" onclick="toggleForms()">Login</a></p>
+  </form>
+</div>
+
+<script>
+function getUsers() {
+  return JSON.parse(localStorage.getItem("users") || "{}");
+}
+function setUsers(users) {
+  localStorage.setItem("users", JSON.stringify(users));
+}
+function getCurrentUser() {
+  return localStorage.getItem("currentUser");
+}
+function setCurrentUser(username) {
+  localStorage.setItem("currentUser", username);
+}
+function logout() {
+  localStorage.removeItem("currentUser");
+  window.location.href = "index.html";
+}
+function toggleForms() {
+  const loginForm = document.getElementById("loginForm");
+  const signupForm = document.getElementById("signupForm");
+  if (loginForm.style.display === "none") {
+    loginForm.style.display = "block";
+    signupForm.style.display = "none";
+  } else {
+    loginForm.style.display = "none";
+    signupForm.style.display = "block";
+  }
+}
+
+const loginForm = document.getElementById("loginForm");
+if (loginForm) {
+  loginForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const username = document.getElementById("loginUsername").value;
+    const password = document.getElementById("loginPassword").value;
+    const users = getUsers();
+    if (!users[username] || users[username].password !== password) {
+      alert("Invalid credentials");
+      return;
+    }
+    setCurrentUser(username);
+    window.location.href = "dashboard.html";
+  });
+}
+
+const signupForm = document.getElementById("signupForm");
+if (signupForm) {
+  signupForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const fullName = document.getElementById("signupFullName").value;
+    const email = document.getElementById("signupEmail").value;
+    const username = document.getElementById("signupUsername").value;
+    const password = document.getElementById("signupPassword").value;
+    const code = document.getElementById("signupCode").value;
+
+    const users = getUsers();
+    if (users[username]) return alert("Username already exists");
+
+    if (code !== "9562934627") {
+      alert("Invalid Entry Code");
+      return;
+    }
+
+    users[username] = { fullName, email, password, code };
+    setUsers(users);
+    alert("Signup successful. Please log in.");
+    toggleForms();
+  });
+}
+
+// ✔ Redirect to dashboard if logged in and currently on index.html
+if (getCurrentUser() && location.pathname.includes("index.html")) {
+  location.href = "dashboard.html";
+}
+
+// ✔ Redirect to index.html if not logged in and tries to access dashboard.html
+if (!getCurrentUser() && location.pathname.includes("dashboard.html")) {
+  location.href = "index.html";
+}
+
+</script>
+
+</body>
+</html>
