@@ -409,3 +409,46 @@ h2 i {
   color: red;
   font-weight: bold;
 }
+
+/* Filter Tab Inputs Styling */
+#filter input,
+#filter select {
+  display: block;
+  width: 100%;
+  margin: 12px 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  background-color: #fafafa;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#filter input:focus,
+#filter select:focus {
+  border-color: #00c9a7;
+  outline: none;
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgba(0, 201, 167, 0.1);
+}
+
+/* Arrange filter fields in a flexible grid */
+#filter {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+#filter .filter-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+/* Optional: add a border to the result section */
+#filteredTasks {
+  margin-top: 10px;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
