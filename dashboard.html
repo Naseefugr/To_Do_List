@@ -88,13 +88,12 @@ dashboard.html
         <h2><i class="fas fa-check-circle"></i> Completed</h2>
         <div id="completedTasks"></div>
       </div>
-      <div id="filter" class="tab" style="display:none;">
-        <h2> <i class="fas fa-filter"></i>Filter</h2>
-        <input type="text" id="filterTitle" placeholder="Search by Title" oninput="filterTasks()" />
-        <input type="date" id="filterDate" onchange="filterTasks()" />
-        <select id="filterCategory" onchange="filterTasks()">
-          <option value="">All Categories</option>
-            <option>MustDo</option>
+   <div class="filter-section">
+  <input type="text" id="filterTitle" placeholder=" Title..." />
+  <input type="date" id="filterDate" />
+  <select id="filterCategory">
+    <option value="">All Categories</option>
+     <option>MustDo</option>
             <option>TimeBound</option>
             <option>Research</option>
             <option>Study</option>
@@ -108,7 +107,88 @@ dashboard.html
             <option>PPT</option>
             <option>digital support</option>
             <option>Other</option>
-        </select>
+  </select>
+
+  <div class="status-filter">
+    <label><input type="radio" name="filterStatus" value="all" checked> All</label>
+    <label><input type="radio" name="filterStatus" value="completed"> Completed</label>
+    <label><input type="radio" name="filterStatus" value="pending"> Pending</label>
+  </div>
+
+  <button class="filter-btn" onclick="filterTasks()"><i class="fas fa-filter"></i> Apply Filters</button>
+</div>
+
+<div id="filteredTasks"></div>
+
+<style>
+.filter-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.filter-section input[type="text"],
+.filter-section input[type="date"],
+.filter-section select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  flex: 1;
+  min-width: 180px;
+}
+
+.status-filter {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.status-filter label {
+  background: #e0e0e0;
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  user-select: none;
+  transition: background 0.3s;
+}
+
+.status-filter input[type="radio"] {
+  display: none;
+}
+
+.status-filter input[type="radio"]:checked + label,
+.status-filter label:hover {
+  background: #4caf50;
+  color: white;
+}
+
+.filter-btn {
+  padding: 10px 20px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.filter-btn:hover {
+  background-color: #0d47a1;
+}
+</style>
+
+        
         <div id="filteredTasks"></div>
       </div>
       <!-- ✔ ADD TO dashboard.html - Profile Section Content -->
