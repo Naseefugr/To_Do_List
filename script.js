@@ -131,7 +131,7 @@ function groupTasksByDate(tasks) {
 
 function renderGroupedTasks(container, groupedTasks, showCompleted = false) {
   container.innerHTML = "";
-  const sortedDates = Object.keys(groupedTasks).sort();
+  const sortedDates = Object.keys(groupedTasks).sort().reverse();
 
   sortedDates.forEach((date) => {
     const dateGroup = document.createElement("div");
@@ -297,65 +297,88 @@ function editTask(index) {
 }
 
 function filterTasks() {
-  const keyword = document.getElementById("filterTitle").value.toLowerCase();
-  const date = document.getElementById("filterDate").value;
-  const category = document.getElementById("filterCategory").value;
-  const status = document.querySelector('input[name="filterStatus"]:checked').value;
+  const titleInput = document.getElementById("filterTitle").value.toLowerCase();
+  const dateInput = document.getElementById("filterDate").value;
+  const categoryInput = document.getElementById("filterCategory").value;
+  const statusInputEl = document.querySelector('input[name="filterStatus"]:checked');
+  const statusInput = statusInputEl ? statusInputEl.value : "all";
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const currentUser = getCurrentUser();
+  if (!currentUser) return;
 
-  const result = getTasks().filter(t => {
-    const matchesKeyword = keyword === "" || t.title.toLowerCase().includes(keyword);
-    const matchesDate = date === "" || t.date === date;
-    const matchesCategory = category === "" || t.criteria === category;
+  const tasks = JSON.parse(localStorage.getItem("tasks_" + currentUser) || "[]");
 
-    let matchesStatus = true;
-    if (status === "completed") matchesStatus = t.completed;
-    else if (status === "pending") matchesStatus = !t.completed;
+  const filteredTasks = tasks.filter(task => {
+    const matchesTitle = !titleInput || task.title.toLowerCase().includes(titleInput);
+    const matchesDate = !dateInput || task.date === dateInput;
+    const matchesCategory = !categoryInput || task.criteria === categoryInput;
+    const isCompleted = task.completed;
 
-    return matchesKeyword && matchesDate && matchesCategory && matchesStatus;
+    const matchesStatus =
+      statusInput === "all" ||
+      (statusInput === "completed" && isCompleted) ||
+      (statusInput === "pending" && !isCompleted);
+
+    return matchesTitle && matchesDate && matchesCategory && matchesStatus;
   });
 
+  displayFilteredTasks(filteredTasks);
+}
+
+function displayFilteredTasks(tasks) {
   const container = document.getElementById("filteredTasks");
   container.innerHTML = "";
 
-  if (result.length === 0) {
-    container.innerHTML = "<p>No matching tasks found.</p>";
+  if (tasks.length === 0) {
+    container.innerHTML = "<p style='text-align:center; color: #777;'>No tasks found.</p>";
     return;
   }
 
-  result.forEach(t => {
-    const deadlineDate = new Date(t.deadline);
-    deadlineDate.setHours(0, 0, 0, 0);
-    const isOverdue = !t.completed && t.deadline && deadlineDate < today;
+  tasks.forEach((task, index) => {
+    const card = document.createElement("div");
+    card.className = "task-card";
+    card.style.cssText = `
+      background: #fff;
+      border-left: 5px solid ${task.completed ? "#4caf50" : "#2196f3"};
+      border-radius: 10px;
+      padding: 15px 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+      transition: all 0.3s;
+    `;
 
-    container.innerHTML += `
-      <div class="task-card">
-        <b>${t.title}</b> - ${t.date} ${t.time}<br>
-        ${t.description}<br>
-        Deadline: ${t.deadline}<br>
-        Category: ${t.criteria}<br>
-        ${isOverdue ? '<span class="pending-flag">⚠ Pending (Deadline Missed)</span><br>' : ''}
-        ${t.completed ? '<span class="completed-label">✔ Completed</span><br>' : ''}
-      </div><hr>`;
+    card.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="margin: 0; font-size: 1.1em; color: #333;">
+          ${task.title}
+          <span style="font-size: 0.85em; color: #777; font-weight: normal;">– ${task.date} ${task.time}</span>
+        </h3>
+        ${task.completed
+          ? '<span style="color: green; font-weight: bold;"><i class="fas fa-check-circle"></i> Done</span>'
+          : '<span style="color: #f39c12;"><i class="fas fa-hourglass-half"></i> Pending</span>'}
+      </div>
+
+      <p style="margin: 8px 0; color: #444;">
+        ${task.description || "<i>No description</i>"}
+      </p>
+
+      <div style="font-size: 0.9em; color: #555;">
+        <p style="margin: 4px 0;"><i class="fas fa-calendar-check"></i> <strong>Deadline:</strong> ${task.deadline || "None"}</p>
+        <p style="margin: 4px 0;"><i class="fas fa-folder-open"></i> <strong>Category:</strong> ${task.criteria || "Uncategorized"}</p>
+      </div>
+    `;
+
+    container.appendChild(card);
   });
 }
 
-function renderProfile() {
-  const users = getUsers();
-  const username = getCurrentUser();
-  const user = users[username];
-  const container = document.getElementById("profileInfo");
-  if (!user || !container) return;
-  container.innerHTML = `
-    <p><strong>Full Name:</strong> ${user.fullName}</p>
-    <p><strong>Username:</strong> ${username}</p>
-    <p><strong>Email:</strong> ${user.email}</p>
-    <p><strong>Password:</strong> ${user.password}</p>
-    <p><strong>Entry Code:</strong> ${user.code}</p>
-  `;
+
+function formatDisplayDate(dateStr) {
+  const options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
+  return new Date(dateStr).toLocaleDateString(undefined, options);
 }
+
+
 
 function editProfile() {
   const users = getUsers();
