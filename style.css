@@ -452,3 +452,13 @@ h2 i {
   border-top: 1px solid #eee;
   padding-top: 20px;
 }
+
+.pending-flag {
+  color: #e53935;
+  font-weight: bold;
+}
+.completed-label {
+  color: #43a047;
+  font-weight: bold;
+}
+
