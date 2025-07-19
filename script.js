@@ -225,7 +225,7 @@ function renderTasks() {
   const uniqueToday = Array.from(new Set(todayList));
   const uniqueUpcoming = Array.from(new Set(upcoming));
 
-  renderGroupedTasks(inboxContainer, groupTasksByDate(inbox.filter(t => !t.completed)));
+  renderGroupedTasks(inboxContainer, groupTasksByDate(inbox.filter(t => !t.completed).reverse()));
   renderGroupedTasks(todayContainer, groupTasksByDate(uniqueToday.filter(t => !t.completed)));
   renderGroupedTasks(upcomingContainer, groupTasksByDate(uniqueUpcoming.filter(t => !t.completed)));
   renderGroupedTasks(completedContainer, groupTasksByDate(completed), true);
