@@ -132,9 +132,11 @@ function groupTasksByDate(tasks) {
 function renderGroupedTasks(container, groupedTasks, showCompleted = false) {
   container.innerHTML = "";
   const sortedDates = Object.keys(groupedTasks).sort();
+
   sortedDates.forEach((date) => {
     const dateGroup = document.createElement("div");
     dateGroup.className = "task-date-group";
+
     const dateHeading = document.createElement("h4");
     dateHeading.textContent = `📅 ${date}`;
     dateGroup.appendChild(dateHeading);
@@ -142,9 +144,14 @@ function renderGroupedTasks(container, groupedTasks, showCompleted = false) {
     groupedTasks[date].forEach((task) => {
       const taskCard = document.createElement("div");
       taskCard.className = "task-card";
-const now = new Date();
-const deadlineDate = new Date(task.deadline);
-const isOverduePending = !task.completed && task.deadline && deadlineDate < now;
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const deadlineDate = new Date(task.deadline);
+      deadlineDate.setHours(0, 0, 0, 0);
+
+      const isOverduePending = !task.completed && task.deadline && deadlineDate < today;
 
 taskCard.innerHTML = `
   <b>${task.title}</b><br>
