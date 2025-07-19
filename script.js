@@ -300,33 +300,46 @@ function filterTasks() {
   const keyword = document.getElementById("filterTitle").value.toLowerCase();
   const date = document.getElementById("filterDate").value;
   const category = document.getElementById("filterCategory").value;
-  const result = getTasks().filter(t =>
-    (keyword === "" || t.title.toLowerCase().includes(keyword)) &&
-    (date === "" || t.date === date) &&
-    (category === "" || t.criteria === category)
-  );
+  const status = document.querySelector('input[name="filterStatus"]:checked').value;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const result = getTasks().filter(t => {
+    const matchesKeyword = keyword === "" || t.title.toLowerCase().includes(keyword);
+    const matchesDate = date === "" || t.date === date;
+    const matchesCategory = category === "" || t.criteria === category;
+
+    let matchesStatus = true;
+    if (status === "completed") matchesStatus = t.completed;
+    else if (status === "pending") matchesStatus = !t.completed;
+
+    return matchesKeyword && matchesDate && matchesCategory && matchesStatus;
+  });
 
   const container = document.getElementById("filteredTasks");
   container.innerHTML = "";
+
+  if (result.length === 0) {
+    container.innerHTML = "<p>No matching tasks found.</p>";
+    return;
+  }
+
   result.forEach(t => {
+    const deadlineDate = new Date(t.deadline);
+    deadlineDate.setHours(0, 0, 0, 0);
+    const isOverdue = !t.completed && t.deadline && deadlineDate < today;
+
     container.innerHTML += `
       <div class="task-card">
         <b>${t.title}</b> - ${t.date} ${t.time}<br>
         ${t.description}<br>
         Deadline: ${t.deadline}<br>
-        Category: ${t.criteria}
+        Category: ${t.criteria}<br>
+        ${isOverdue ? '<span class="pending-flag">⚠ Pending (Deadline Missed)</span><br>' : ''}
+        ${t.completed ? '<span class="completed-label">✔ Completed</span><br>' : ''}
       </div><hr>`;
   });
-}
-
-if (location.pathname.includes("dashboard.html")) {
-  window.onload = () => {
-    renderTasks();
-    document.getElementById("taskForm").addEventListener("submit", function (e) {
-      e.preventDefault();
-      addTask();
-    });
-  };
 }
 
 function renderProfile() {
