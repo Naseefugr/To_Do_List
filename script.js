@@ -142,7 +142,9 @@ function renderGroupedTasks(container, groupedTasks, showCompleted = false) {
     groupedTasks[date].forEach((task) => {
       const taskCard = document.createElement("div");
       taskCard.className = "task-card";
- const isOverdueComplete = task.completed && task.deadline && new Date(task.deadline) < new Date();
+const now = new Date();
+const deadlineDate = new Date(task.deadline);
+const isOverduePending = !task.completed && task.deadline && deadlineDate < now;
 
 taskCard.innerHTML = `
   <b>${task.title}</b><br>
@@ -150,7 +152,7 @@ taskCard.innerHTML = `
   ${task.description}<br>
   <small>Deadline: ${task.deadline || "N/A"}</small><br>
   <small>Category: ${task.criteria || "None"}</small><br>
-  ${isOverdueComplete ? `<span class="pending-flag">⚠ Completed after deadline — Marked as Pending</span><br>` : ""}
+  ${isOverduePending ? `<span class="pending-flag">⚠ Pending (Deadline Missed)</span><br>` : ""}
   <div class="task-actions">
     ${!task.completed ? `<button onclick="confirmComplete(${task.id})">✔ Complete</button>` : ""}
     <button onclick="editTask(${task.id})">✎ Edit</button>
@@ -491,3 +493,4 @@ function saveProfileChanges() {
   loadProfile();
   alert("Profile updated successfully.");
 }
+
