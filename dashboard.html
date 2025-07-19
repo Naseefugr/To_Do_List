@@ -88,106 +88,144 @@ dashboard.html
         <h2><i class="fas fa-check-circle"></i> Completed</h2>
         <div id="completedTasks"></div>
       </div>
-      <h2 class="filter-header"><i class="fas fa-filter"></i> Filter Tasks</h2>
+<div id="filter" class="tab" style="display: none;">
+  <h2 class="filter-header"><i class="fas fa-filter"></i> Filter Tasks</h2>
+  <div class="filter-section">
+    <input type="text" id="filterTitle" placeholder=" Title..." />
+    <input type="date" id="filterDate" />
+    <select id="filterCategory">
+      <option value="">All Categories</option>
+      <option>MustDo</option>
+      <option>TimeBound</option>
+      <option>Research</option>
+      <option>Study</option>
+      <option>Poster</option>
+      <option>Video</option>
+      <option>Web</option>
+      <option>Writing</option>
+      <option>Reading</option>
+      <option>Cleaning</option>
+      <option>Excel/sheet</option>
+      <option>PPT</option>
+      <option>digital support</option>
+      <option>Other</option>
+    </select>
 
-   <div class="filter-section">
-  <input type="text" id="filterTitle" placeholder=" Title..." />
-  <input type="date" id="filterDate" />
-  <select id="filterCategory">
-    <option value="">All Categories</option>
-     <option>MustDo</option>
-            <option>TimeBound</option>
-            <option>Research</option>
-            <option>Study</option>
-            <option>Poster</option>
-            <option>Video</option>
-            <option>Web</option>
-            <option>Writing</option>
-            <option>Reading</option>
-            <option>Cleaning</option>
-            <option>Excel/sheet</option>
-            <option>PPT</option>
-            <option>digital support</option>
-            <option>Other</option>
-  </select>
+    <div class="status-filter">
+      <label><input type="radio" name="filterStatus" value="all" checked> All</label>
+      <label><input type="radio" name="filterStatus" value="completed"> Completed</label>
+      <label><input type="radio" name="filterStatus" value="pending"> Pending</label>
+    </div>
 
-  <div class="status-filter">
-    <label><input type="radio" name="filterStatus" value="all" checked> All</label>
-    <label><input type="radio" name="filterStatus" value="completed"> Completed</label>
-    <label><input type="radio" name="filterStatus" value="pending"> Pending</label>
+    <button class="filter-btn" onclick="filterTasks()"><i class="fas fa-filter"></i> Apply Filters</button>
   </div>
 
-  <button class="filter-btn" onclick="filterTasks()"><i class="fas fa-filter"></i> Apply Filters</button>
+  <div id="filteredTasks"></div>
 </div>
 
-<div id="filteredTasks"></div>
-
 <style>
-.filter-section {
+#filter .filter-section {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  background: #f9f9f9;
-  padding: 15px;
+  gap: 16px;
+  background: #ffffff;
+  padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-  align-items: center;
-  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  align-items: flex-end;
+  margin-bottom: 25px;
 }
 
-.filter-section input[type="text"],
-.filter-section input[type="date"],
-.filter-section select {
-  padding: 10px;
-  border: 1px solid #ccc;
+#filter input[type="text"],
+#filter input[type="date"],
+#filter select {
+  padding: 10px 14px;
+  border: 1px solid #ddd;
   border-radius: 8px;
   font-size: 14px;
-  flex: 1;
-  min-width: 180px;
+  min-width: 160px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#filter input[type="text"]:focus,
+#filter input[type="date"]:focus,
+#filter select:focus {
+  outline: none;
+  border-color: #007BFF;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
+}
+
+#filter .filter-btn {
+  background: #007BFF;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s;
+}
+
+#filter .filter-btn:hover {
+  background: #0056b3;
+  transform: scale(1.02);
 }
 
 .status-filter {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
-  margin-left: auto;
-  flex-wrap: wrap;
+  font-size: 14px;
+  color: #444;
 }
 
 .status-filter label {
-  background: #e0e0e0;
-  padding: 6px 12px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 14px;
-  user-select: none;
-  transition: background 0.3s;
+  font-weight: 500;
 }
 
-.status-filter input[type="radio"] {
-  display: none;
+.task-date-group {
+  margin-bottom: 30px;
 }
 
-.status-filter input[type="radio"]:checked + label,
-.status-filter label:hover {
-  background: #4caf50;
-  color: white;
+.task-date-group h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 4px;
 }
 
-.filter-btn {
-  padding: 10px 20px;
-  background-color: #1976d2;
-  color: white;
-  border: none;
+.task-card {
+  background: #fff;
+  border-left: 5px solid #007BFF;
+  padding: 15px 20px;
+  margin-bottom: 12px;
   border-radius: 10px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
 }
 
-.filter-btn:hover {
-  background-color: #0d47a1;
+.task-status {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 20px;
+  margin-top: 8px;
+  font-weight: 500;
 }
+
+.task-status.completed {
+  background-color: #28a745;
+  color: white;
+}
+
+.task-status.pending {
+  background-color: #ffc107;
+  color: black;
+}
+
+
 </style>
 
         
