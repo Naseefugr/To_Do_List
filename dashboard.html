@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard | To-do List</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="header-mobile">
+    <i class="fas fa-bars menu-icon" onclick="toggleSidebar()"></i>
+    <div class="app-title">To Do List</div>
+    <span></span> </div>
+
+  <div class="sidebar" id="sidebar">
+    <h2 class="title"> <a href="dashboard.html"  style="text-decoration: none; color: #00c9a7;"> <i class="fas fa-tasks"></i> To Do List</a></h2>
+    <ul>
+      <li onclick="showTab('inbox')"><i class="fas fa-inbox"></i> Inbox</li>
+      <li onclick="showTab('addTask')" ><i class="fas fa-plus"></i> Add a Task</li>
+      <li onclick="showTab('today')"><i class="fas fa-calendar-day"></i> Today</li>
+      <li onclick="showTab('upcoming')"><i class="fas fa-calendar-alt"></i> Upcoming</li>
+      <li onclick="showTab('completed')"><i class="fas fa-check-circle"></i> Completed</li>
+      <li onclick="showTab('filter')"><i class="fas fa-filter"></i> Filter</li>
+      <li class="profile-menu">
+        <span onclick="toggleProfileMenu()"><i class="fas fa-user"></i> Profile</span>
+        <ul class="dropdown" id="profileDropdown">
+          <li onclick="showTab('profile')">View Profile</li>
+          <li id="logoutBtn" style="color: red;">Logout</li>
+          <hr />
+          <li onclick="showTab('help')">Help</li>
+          <li onclick="showTab('about')">About</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <div class="main-content">
+    <div id="contentArea">
+ <div id="addTask" class="tab" style="display:none;">
+  <h2><i class="fas fa-plus"></i> Add a Task</h2>
+  <form id="taskForm" class="task-form">
+    <div class="task-card">
+      <div class="form-group">
+        <label for="taskTitle"><i class="fas fa-heading"></i> Title</label>
+        <input type="text" id="taskTitle" placeholder="Enter task title..." required />
+      </div>
+
+      <div class="form-group">
+        <label for="taskDescription"><i class="fas fa-align-left"></i> Description</label>
+        <textarea id="taskDescription" placeholder="Add extra notes..."></textarea>
+      </div>
+<div class="task-date-row">
+  <div>
+    <label for="taskDate">Date</label>
+    <input type="date" id="taskDate" required />
+  </div>
+  <div>
+    <label for="taskTime">Time</label>
+    <input type="time" id="taskTime" required />
+  </div>
+  <div>
+    <label for="taskDeadline">Deadline</label>
+    <input type="date" id="taskDeadline" />
+  </div>
+</div>
+
+      <div class="form-group">
+        <label for="taskCategory"><i class="fas fa-tags"></i> Category</label>
+        <select id="taskCategory" required>
+          <option value="">Select Category</option>
+          <option>MustDo</option>
+          <option>TimeBound</option>
+          <option>Research</option>
+          <option>Study</option>
+          <option>Poster</option>
+          <option>Video</option>
+          <option>Web</option>
+          <option>Writing</option>
+          <option>Reading</option>
+          <option>Cleaning</option>
+          <option>Excel/sheet</option>
+          <option>PPT</option>
+          <option>Digital Support</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <button type="submit" class="submit-btn">
+        <i class="fas fa-paper-plane"></i> Add Task
+      </button>
+    </div>
+  </form>
+</div>
+
+      <div id="inbox" class="tab" style="display:none;">
+         <h2><i class="fas fa-inbox"></i> Inbox</h2>
+        <div id="inboxTasks"></div>
+      </div>
+      <div id="today" class="tab" style="display:none;">
+        <h2><i class="fas fa-calendar-day"></i> Today</h2>
+        <div id="todayTasks"></div>
+      </div>
+      <div id="upcoming" class="tab" style="display:none;">
+        <h2><i class="fas fa-calendar-alt"></i> Upcoming</h2>
+        <div id="upcomingTasks"></div>
+      </div>
+      <div id="completed" class="tab" style="display:none;">
+        <h2><i class="fas fa-check-circle"></i> Completed</h2>
+        <div id="completedTasks"></div>
+      </div>
+      <div id="filter" class="tab" style="display: none;">
+  <h2 class="filter-header"><i class="fas fa-filter"></i> Filter Tasks</h2>
+
+  <div class="filter-section" style="
+    font-family: 'Segoe UI', sans-serif;
+    background: #fefefe;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.07);
+    max-width: 950px;
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    border: 1px solid #eaeaea;
+  ">
+
+    <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+      <input id="filterTitle" type="text" placeholder=" Task Title..." style="
+        flex: 2;
+        padding: 12px 15px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        font-size: 15px;
+        transition: border 0.3s, box-shadow 0.3s;
+      " onfocus="this.style.boxShadow='0 0 5px rgba(0,123,255,0.4)';" onblur="this.style.boxShadow='none';"/>
+
+      <input id="filterDate" type="date" style="
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        font-size: 15px;
+        transition: box-shadow 0.3s;
+      " onfocus="this.style.boxShadow='0 0 5px rgba(0,123,255,0.4)';" onblur="this.style.boxShadow='none';"/>
+
+      <select id="filterCategory" style="
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        font-size: 15px;
+        flex: 1.2;
+        transition: box-shadow 0.3s;
+      " onfocus="this.style.boxShadow='0 0 5px rgba(0,123,255,0.4)';" onblur="this.style.boxShadow='none';">
+        <option value="">All Categories</option>
+        <option>MustDo</option>
+        <option>TimeBound</option>
+        <option>Research</option>
+        <option>Study</option>
+        <option>Poster</option>
+        <option>Video</option>
+        <option>Web</option>
+        <option>Writing</option>
+        <option>Reading</option>
+        <option>Cleaning</option>
+        <option>Excel/sheet</option>
+        <option>PPT</option>
+        <option>Digital Support</option>
+        <option>Other</option>
+      </select>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: center;">
+      <span style="font-weight: bold; font-size: 16px;">Status:</span>
+      <label><input type="radio" name="filterStatus" value="all" checked /> All</label>
+<label>
+  <input type="radio" name="filterStatus" value="completed" />
+  <i class="fas fa-check-circle" style="color: green;"></i> Completed
+</label>
+<label>
+  <input type="radio" name="filterStatus" value="pending" />
+  <i class="fas fa-hourglass-half" style="color: orange;"></i> Pending
+</label>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-start;">
+      <button onclick="filterTasks()" class="filter-btn" style="
+        background: #1a73e8;
+        color: white;
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s;
+      " onmouseover="this.style.background='#155dc4'" onmouseout="this.style.background='#1a73e8'">
+        <i class="fas fa-filter"></i> Apply Filters
+      </button>
+
+      <button onclick="clearFilters()" class="clear-btn" style="
+        background: #e0e0e0;
+        color: #333;
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      ">
+        <i class="fas fa-times-circle"></i> Clear
+      </button>
+    </div>
+  </div>
+
+  <div id="filteredTasks" style="margin-top: 30px;"></div>
+</div>
+
+      <div id="profile" class="tab" style="display:none;">
+        <h2><i class="fas fa-user"></i> Your Profile</h2>
+        <div id="profileInfo"></div>
+        <div class="profile-actions">
+          <p>We can't load your account details and edit it. Say your admin of site (naseefugr)</p>
+          <br><br><br>
+          <button class="edit-btn" onclick="editProfile()">Edit Profile</button>
+          <button class="delete-btn" onclick="deleteAccount()">Delete Account</button>
+        </div>
+      </div>
+<div id="help" class="tab" style="display:none;">
+  <h2><i class="fas fa-question-circle"></i> Help</h2>
+  <div class="help-section" style="font-family: 'Segoe UI', sans-serif; line-height: 1.6; padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.05); max-width: 800px; margin: 30px auto;">
+    <h2 style="color: #333; font-size: 28px; margin-bottom: 20px;">
+      <i class="fas fa-question-circle"></i> How to Use the To-Do List App
+    </h2>
+    <p style="font-size: 16px; color: #555;">
+      This smart and personalized to-do list web app is designed to help you manage your tasks efficiently. After logging in or signing up, you can access the dashboard, which includes the following features:
+    </p>
+
+    <h3 style="margin-top: 20px; color: #1a73e8;"><i class="fas fa-plus"></i> Add a Task</h3>
+    <p>Create tasks with a title, description, date, time, deadline, and category (e.g., Reading, Writing, Poster, etc.). This data is saved per user and stored securely in your browser or Firebase.</p>
+
+    <h3 style="margin-top: 20px; color: #1a73e8;"><i class="fas fa-inbox"></i> Inbox</h3>
+    <p>View all your pending (incomplete) tasks across all dates. You can complete, edit, or delete tasks here.</p>
+
+    <h3 style="margin-top: 20px; color: #1a73e8;"><i class="fas fa-calendar-day"></i> Today</h3>
+    <p>Shows tasks due today based on the set date.</p>
+
+    <h3 style="margin-top: 20px; color: #1a73e8;"><i class="fas fa-calendar-alt"></i> Upcoming</h3>
+    <p>Displays tasks scheduled for future dates or deadlines.</p>
+
+    <h3 style="margin-top: 20px; color: #1a73e8;"><i class="fas fa-check-circle"></i> Completed</h3>
+    <p>Shows all tasks marked complete, grouped by date.</p>
+
+    <h3 style="margin-top: 20px; color: #1a73e8;"><i class="fas fa-filter"></i> Filter</h3>
+    <p>Search and filter tasks by title, date, category, and completion status.</p>
+
+    <h3 style="margin-top: 20px; color: #1a73e8;"><i class="fas fa-user"></i> Profile</h3>
+    <p>Manage your full name, email, and password. Option to delete your account permanently.</p>
+
+    <h3 style="margin-top: 20px; color: #1a73e8;"><i class="fas fa-question-circle"></i> Help & <i class="fas fa-info-circle"></i> About</h3>
+    <p>Read instructions on using the app or learn more about its mission and development.</p>
+
+    <h3 style="margin-top: 20px; color: #1a73e8;"><i class="fas fa-search"></i> Search Bar</h3>
+    <p>Search your tasks live by typing in the dashboard’s search input.</p>
+
+    <h3 style="margin-top: 20px; color: #1a73e8;"><i class="fas fa-plus-circle"></i> Floating Add Button</h3>
+    <p>A '+' button at the bottom-right opens the Add Task tab instantly.</p>
+  </div>
+</div>
+
+<div id="about" class="tab" style="display:none;">
+  <h2><i class="fas fa-info-circle"></i> About</h2>
+  <div class="about-section" style="font-family: 'Segoe UI', sans-serif; line-height: 1.6; padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.05); max-width: 800px; margin: 30px auto;">
+    <h2 style="color: #333; font-size: 28px; margin-bottom: 20px;">
+      <i class="fas fa-info-circle"></i> About This App
+    </h2>
+
+    <h3 style="color: #1a73e8;"><i class="fas fa-bullseye"></i> Mission</h3>
+    <p style="color: #555; font-size: 16px;">
+      This app empowers students, professionals, and creatives to manage tasks easily. It’s fast, distraction-free, and works without servers.
+    </p>
+
+    <h3 style="color: #1a73e8;"><i class="fas fa-user-astronaut"></i> Developer</h3>
+    <p style="color: #555; font-size: 16px;">
+      Built by <strong>Muhammad Naseef Ugrapuram</strong> — a passionate developer focused on simple, accessible, and functional web tools.
+    </p>
+
+    <h3 style="color: #1a73e8;"><i class="fas fa-code"></i> Tech Stack</h3>
+    <p style="color: #555; font-size: 16px;">
+      Developed using <strong>HTML, CSS, JavaScript</strong>. Powered by <strong>localStorage</strong> or <strong>Firebase</strong> for cloud data and auth.
+    </p>
+
+    <h3 style="color: #1a73e8;"><i class="fas fa-shield-alt"></i> Privacy</h3>
+    <p style="color: #555; font-size: 16px;">
+      Your data stays with you — no third-party tracking or analytics. All tasks are user-owned and secure.
+    </p>
+
+    <h3 style="color: #1a73e8;"><i class="fas fa-copyright"></i> Copyright</h3>
+    <p style="color: #555; font-size: 16px;">
+      © 2025 <strong>Muhammad Naseef Ugrapuram</strong>. Free for academic/personal use. For commercial use, please give credit.
+    </p>
+
+    <h3 style="color: #1a73e8;"><i class="fas fa-heart"></i> Thank You!</h3>
+    <p style="color: #555; font-size: 16px;">
+      Thanks for using this app! Your feedback is welcome to make it even better.
+    </p>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+  <button class="fab" onclick="showTab('addTask')"><i class="fas fa-plus"></i></button>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+  <script src="firebase-config.js"></script>
+  <script src="dashboard.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      showTab('inbox');
+    });
+
+    function showTab(tabId) {
+        const tabs = document.querySelectorAll(".tab");
+        tabs.forEach((tab) => (tab.style.display = "none"));
+        const activeTab = document.getElementById(tabId);
+        if (activeTab) activeTab.style.display = "block";
+        // Close sidebar after selecting a tab on mobile
+        if (window.innerWidth < 768) { // Assuming 768px is your mobile breakpoint
+            toggleSidebar();
+        }
+    }
+
+    function toggleProfileMenu() {
+        const dropdown = document.getElementById("profileDropdown");
+        dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    }
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+        sidebar.classList.toggle("active");
+        if (sidebar.classList.contains("active")) {
+            overlay.style.display = "block";
+        } else {
+            overlay.style.display = "none";
+        }
+    }
+  </script>
+</body>
